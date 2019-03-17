@@ -18,11 +18,10 @@ import * as minimatch from 'minimatch';
 import { FsHelper } from './FsHelper';
 import { IncrementalCheckerInterface } from './IncrementalCheckerInterface';
 import {
-  wrapCompilerHost,
+  emptyWrapperConfig,
   TypeScriptWrapperConfig,
-  getWrapperUtils,
-  emptyWrapperConfig
-} from './wrapTypeScript';
+  getWrapperUtils
+} from './wrapperUtils';
 
 export class IncrementalChecker implements IncrementalCheckerInterface {
   // it's shared between compilations

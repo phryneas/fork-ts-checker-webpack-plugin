@@ -1,7 +1,6 @@
 // tslint:disable-next-line:no-implicit-dependencies
 import * as ts from 'typescript'; // Imported for types alone
 import { LinkedList } from './LinkedList';
-import { IncrementalChecker } from './IncrementalChecker';
 
 interface DirectoryWatchDelaySlot {
   events: { fileName: string }[];
