@@ -181,6 +181,22 @@ export function wrapTypescript(
         tsProxy,
         config
       );
+    },
+    // function createEmitAndSemanticDiagnosticsBuilderProgram(newProgram: ts.Program, host: ts.BuilderProgramHost, oldProgram?: ts.EmitAndSemanticDiagnosticsBuilderProgram, configFileParsingDiagnostics?: ReadonlyArray<ts.Diagnostic>): ts.EmitAndSemanticDiagnosticsBuilderProgram;
+    // function createEmitAndSemanticDiagnosticsBuilderProgram(rootNames: ReadonlyArray<string> | undefined, options: ts.CompilerOptions | undefined, host?: CompilerHost, oldProgram?: ts.EmitAndSemanticDiagnosticsBuilderProgram, configFileParsingDiagnostics?: ReadonlyArray<ts.Diagnostic>, projectReferences?: ReadonlyArray<ts.ProjectReference>): ts.EmitAndSemanticDiagnosticsBuilderProgram;
+    createEmitAndSemanticDiagnosticsBuilderProgram(...args: any[]) {
+      if (isTsProgram(args[0])) {
+        throw new Error(
+          "only the signature 'rootNames, options, host, ... is supported for createEmitAndSemanticDiagnosticsBuilderProgram"
+        );
+      }
+      const origOptions = args[1];
+      const origHost = args[2];
+
+      args[2] = wrapCompilerHost(origHost, origOptions, tsProxy, config);
+      return (typescript.createEmitAndSemanticDiagnosticsBuilderProgram as any)(
+        ...args
+      );
     }
   };
 
@@ -197,4 +213,10 @@ export function wrapTypescript(
   });
 
   return tsProxy;
+}
+
+function isTsProgram(
+  x: ReadonlyArray<string> | undefined | ts.Program
+): x is ts.Program {
+  return !!x && 'getRootFileNames' in x;
 }

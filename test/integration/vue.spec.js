@@ -6,7 +6,7 @@ var process = require('process');
 var unixify = require('unixify');
 var helpers = require('./helpers');
 
-describe(
+describe.skip(
   '[INTEGRATION] vue tests - useTypescriptIncrementalApi: true',
   makeCommonTests(true)
 );

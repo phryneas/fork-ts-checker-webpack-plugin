@@ -1,0 +1,246 @@
+yarn run v1.9.4
+$ /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/.bin/mocha -R spec ./test/integration/vue ./test/integration/vue.spec.js --exit
+
+
+  [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+    ✓ should create a Vue program config if vue=true (733ms)
+    ✓ should not create a Vue program config if vue=false (207ms)
+    ✓ should create a Vue program if vue=true (211ms)
+    ✓ should not create a Vue program if vue=false (179ms)
+    ✓ should get syntactic diagnostics from Vue program (246ms)
+    1) should not find syntactic errors when checkSyntacticErrors is false
+    ✓ should not report no-consecutive-blank-lines tslint rule (2541ms)
+    2) should find syntactic errors when checkSyntacticErrors is true
+    3) should resolve src attribute but not report not found error
+    4) should be able to extract script from example-ts.vue
+    5) should be able to extract script from example-tsx.vuex
+    6) should be able to extract script from example-js.vue
+    7) should be able to extract script from example-jsx.vuex
+    8) should be able to extract script from example-nolang.vue
+    should be able to compile *.vue[x] with each lang
+      ✓ lang=ts
+      ✓ lang=tsx
+      ✓ lang=js
+      ✓ lang=jsx
+      ✓ no lang
+    should be able to detect errors in *.vue[x]
+      9) lang=ts
+      10) lang=tsx
+      ✓ lang=js
+      ✓ lang=jsx
+      ✓ no lang
+    should resolve *.vue in the same way as TypeScript
+      ✓ should be able to import by relative path
+      ✓ should be able to import by path from baseUrl
+      ✓ should be able to import by compilerOptions.paths setting
+      ✓ should be able to import by compilerOptions.paths setting (by array)
+      11) should not report any compilation errors
+
+  [INTEGRATION] vue tests - useTypescriptIncrementalApi: false
+    - should create a Vue program config if vue=true
+    - should not create a Vue program config if vue=false
+    - should create a Vue program if vue=true
+    - should not create a Vue program if vue=false
+    - should get syntactic diagnostics from Vue program
+    - should not find syntactic errors when checkSyntacticErrors is false
+    - should not report no-consecutive-blank-lines tslint rule
+    - should find syntactic errors when checkSyntacticErrors is true
+    - should resolve src attribute but not report not found error
+    - should be able to extract script from example-ts.vue
+    - should be able to extract script from example-tsx.vuex
+    - should be able to extract script from example-js.vue
+    - should be able to extract script from example-jsx.vuex
+    - should be able to extract script from example-nolang.vue
+    should be able to compile *.vue[x] with each lang
+      - lang=ts
+      - lang=tsx
+      - lang=js
+      - lang=jsx
+      - no lang
+    should be able to detect errors in *.vue[x]
+      - lang=ts
+      - lang=tsx
+      - lang=js
+      - lang=jsx
+      - no lang
+    should resolve *.vue in the same way as TypeScript
+      - should be able to import by relative path
+      - should be able to import by path from baseUrl
+      - should be able to import by compilerOptions.paths setting
+      - should be able to import by compilerOptions.paths setting (by array)
+      - should not report any compilation errors
+
+
+  18 passing (16s)
+  29 pending
+  11 failing
+
+  1) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should not find syntactic errors when checkSyntacticErrors is false:
+
+      Uncaught AssertionError: expected 0 to equal 1
+      + expected - actual
+
+      -0
+      +1
+      
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/test/integration/vue.spec.js:113:55
+      at finalCallback (node_modules/webpack/lib/Compiler.js:194:39)
+      at hooks.done.callAsync.err (node_modules/webpack/lib/Compiler.js:244:15)
+      at AsyncSeriesHook.eval [as callAsync] (eval at create (node_modules/tapable/lib/HookCodeFactory.js:32:10), <anonymous>:24:1)
+      at AsyncSeriesHook.lazyCompileHook (node_modules/tapable/lib/Hook.js:154:20)
+      at emitRecords.err (node_modules/webpack/lib/Compiler.js:242:23)
+      at Compiler.emitRecords (node_modules/webpack/lib/Compiler.js:375:39)
+      at emitAssets.err (node_modules/webpack/lib/Compiler.js:236:11)
+      at hooks.afterEmit.callAsync.err (node_modules/webpack/lib/Compiler.js:357:14)
+      at AsyncSeriesHook.eval [as callAsync] (eval at create (node_modules/tapable/lib/HookCodeFactory.js:32:10), <anonymous>:6:1)
+      at AsyncSeriesHook.lazyCompileHook (node_modules/tapable/lib/Hook.js:154:20)
+      at asyncLib.forEach.err (node_modules/webpack/lib/Compiler.js:354:27)
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/neo-async/async.js:2825:7
+      at done (node_modules/neo-async/async.js:2861:11)
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/neo-async/async.js:2813:7
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/graceful-fs/graceful-fs.js:45:10
+      at FSReqWrap.oncomplete (fs.js:139:20)
+
+  2) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should find syntactic errors when checkSyntacticErrors is true:
+
+      Uncaught AssertionError: expected 1 to equal 2
+      + expected - actual
+
+      -1
+      +2
+      
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/test/integration/vue.spec.js:133:55
+      at finalCallback (node_modules/webpack/lib/Compiler.js:194:39)
+      at hooks.done.callAsync.err (node_modules/webpack/lib/Compiler.js:244:15)
+      at AsyncSeriesHook.eval [as callAsync] (eval at create (node_modules/tapable/lib/HookCodeFactory.js:32:10), <anonymous>:24:1)
+      at AsyncSeriesHook.lazyCompileHook (node_modules/tapable/lib/Hook.js:154:20)
+      at emitRecords.err (node_modules/webpack/lib/Compiler.js:242:23)
+      at Compiler.emitRecords (node_modules/webpack/lib/Compiler.js:375:39)
+      at emitAssets.err (node_modules/webpack/lib/Compiler.js:236:11)
+      at hooks.afterEmit.callAsync.err (node_modules/webpack/lib/Compiler.js:357:14)
+      at AsyncSeriesHook.eval [as callAsync] (eval at create (node_modules/tapable/lib/HookCodeFactory.js:32:10), <anonymous>:6:1)
+      at AsyncSeriesHook.lazyCompileHook (node_modules/tapable/lib/Hook.js:154:20)
+      at asyncLib.forEach.err (node_modules/webpack/lib/Compiler.js:354:27)
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/neo-async/async.js:2825:7
+      at done (node_modules/neo-async/async.js:2861:11)
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/neo-async/async.js:2813:7
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/graceful-fs/graceful-fs.js:45:10
+      at FSReqWrap.oncomplete (fs.js:139:20)
+
+  3) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should resolve src attribute but not report not found error:
+     Uncaught AssertionError: expected undefined to match /test\/integration\/vue\/src\/attrs\/test.ts$/
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/test/integration/vue.spec.js:144:35
+      at finalCallback (node_modules/webpack/lib/Compiler.js:194:39)
+      at hooks.done.callAsync.err (node_modules/webpack/lib/Compiler.js:244:15)
+      at AsyncSeriesHook.eval [as callAsync] (eval at create (node_modules/tapable/lib/HookCodeFactory.js:32:10), <anonymous>:24:1)
+      at AsyncSeriesHook.lazyCompileHook (node_modules/tapable/lib/Hook.js:154:20)
+      at emitRecords.err (node_modules/webpack/lib/Compiler.js:242:23)
+      at Compiler.emitRecords (node_modules/webpack/lib/Compiler.js:375:39)
+      at emitAssets.err (node_modules/webpack/lib/Compiler.js:236:11)
+      at hooks.afterEmit.callAsync.err (node_modules/webpack/lib/Compiler.js:357:14)
+      at AsyncSeriesHook.eval [as callAsync] (eval at create (node_modules/tapable/lib/HookCodeFactory.js:32:10), <anonymous>:6:1)
+      at AsyncSeriesHook.lazyCompileHook (node_modules/tapable/lib/Hook.js:154:20)
+      at asyncLib.forEach.err (node_modules/webpack/lib/Compiler.js:354:27)
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/neo-async/async.js:2825:7
+      at done (node_modules/neo-async/async.js:2861:11)
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/neo-async/async.js:2813:7
+      at /home/weber/tmp/fork-ts-checker-webpack-plugin/node_modules/graceful-fs/graceful-fs.js:45:10
+      at FSReqWrap.oncomplete (fs.js:139:20)
+
+  4) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should be able to extract script from example-ts.vue:
+
+      AssertionError: expected false to be true
+      + expected - actual
+
+      -false
+      +true
+      
+      at Context.<anonymous> (test/integration/vue.spec.js:168:50)
+
+  5) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should be able to extract script from example-tsx.vuex:
+
+      AssertionError: expected false to be true
+      + expected - actual
+
+      -false
+      +true
+      
+      at Context.<anonymous> (test/integration/vue.spec.js:168:50)
+
+  6) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should be able to extract script from example-js.vue:
+
+      AssertionError: expected false to be true
+      + expected - actual
+
+      -false
+      +true
+      
+      at Context.<anonymous> (test/integration/vue.spec.js:168:50)
+
+  7) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should be able to extract script from example-jsx.vuex:
+
+      AssertionError: expected false to be true
+      + expected - actual
+
+      -false
+      +true
+      
+      at Context.<anonymous> (test/integration/vue.spec.js:168:50)
+
+  8) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should be able to extract script from example-nolang.vue:
+
+      AssertionError: expected false to be true
+      + expected - actual
+
+      -false
+      +true
+      
+      at Context.<anonymous> (test/integration/vue.spec.js:168:50)
+
+  9) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should be able to detect errors in *.vue[x]
+         lang=ts:
+
+      AssertionError: expected 0 to equal 1
+      + expected - actual
+
+      -0
+      +1
+      
+      at Context.<anonymous> (test/integration/vue.spec.js:223:55)
+
+  10) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should be able to detect errors in *.vue[x]
+         lang=tsx:
+
+      AssertionError: expected 0 to equal 1
+      + expected - actual
+
+      -0
+      +1
+      
+      at Context.<anonymous> (test/integration/vue.spec.js:229:57)
+
+  11) [INTEGRATION] vue tests - useTypescriptIncrementalApi: true
+       should resolve *.vue in the same way as TypeScript
+         should not report any compilation errors:
+
+      AssertionError: expected 1 to equal 0
+      + expected - actual
+
+      -1
+      +0
+      
+      at Context.<anonymous> (test/integration/vue.spec.js:283:37)
+
+
+
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
