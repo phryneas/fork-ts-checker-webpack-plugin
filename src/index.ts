@@ -401,11 +401,24 @@ class ForkTsCheckerWebpackPlugin {
             this.serviceRpc!.rpc<RunPayload, RunResult>(
               RUN,
               this.cancellationToken.toJSON()
-            ).then(result => {
-              if (result) {
-                this.handleServiceMessage(result);
-              }
-            });
+            )
+              .then(result => {
+                if (result) {
+                  this.handleServiceMessage(result);
+                }
+              })
+              .catch(error => {
+                if (!this.silent && this.logger) {
+                  this.logger.error(
+                    this.colors.red(
+                      'Error during checking: ' +
+                        (error ? error.toString() : 'Unknown error')
+                    )
+                  );
+                }
+
+                forkTsCheckerHooks.serviceStartError.call(error);
+              });
           } catch (error) {
             if (!this.silent && this.logger) {
               this.logger.error(
@@ -453,11 +466,27 @@ class ForkTsCheckerWebpackPlugin {
               this.serviceRpc!.rpc<RunPayload, RunResult>(
                 RUN,
                 this.cancellationToken.toJSON()
-              ).then(result => {
-                if (result) {
-                  this.handleServiceMessage(result);
-                }
-              });
+              )
+                .then(result => {
+                  if (result) {
+                    this.handleServiceMessage(result);
+                  }
+                })
+                .catch(error => {
+                  if (!this.silent && this.logger) {
+                    this.logger.error(
+                      this.colors.red(
+                        'Error during checking: ' +
+                          (error ? error.toString() : 'Unknown error')
+                      )
+                    );
+                  }
+
+                  this.compiler.applyPlugins(
+                    legacyHookMap.serviceStartError,
+                    error
+                  );
+                });
             } catch (error) {
               if (!this.silent && this.logger) {
                 this.logger.error(
