@@ -12,6 +12,7 @@ import {
 } from './NormalizedMessageFactories';
 import { RpcProvider } from 'worker-rpc';
 import { RunPayload, RunResult, RUN } from './RpcTypes';
+import { prepareErrorForSerialization } from './util';
 
 const rpc = new RpcProvider(message => {
   try {
@@ -91,7 +92,9 @@ async function run(cancellationToken: CancellationToken) {
 
 rpc.registerRpcHandler<RunPayload, RunResult>(RUN, message =>
   typeof message !== 'undefined'
-    ? run(CancellationToken.createFromJSON(typescript, message!))
+    ? run(CancellationToken.createFromJSON(typescript, message!)).catch(e => {
+        throw prepareErrorForSerialization(e);
+      })
     : undefined
 );
 

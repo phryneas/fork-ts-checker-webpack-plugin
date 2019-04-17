@@ -412,7 +412,9 @@ class ForkTsCheckerWebpackPlugin {
                   this.logger.error(
                     this.colors.red(
                       'Error during checking: ' +
-                        (error ? error.toString() : 'Unknown error')
+                        (error
+                          ? error.message || error.toString()
+                          : 'Unknown error')
                     )
                   );
                 }
@@ -477,7 +479,9 @@ class ForkTsCheckerWebpackPlugin {
                     this.logger.error(
                       this.colors.red(
                         'Error during checking: ' +
-                          (error ? error.toString() : 'Unknown error')
+                          (error
+                            ? error.message || error.toString()
+                            : 'Unknown error')
                       )
                     );
                   }

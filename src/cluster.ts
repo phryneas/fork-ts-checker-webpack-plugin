@@ -6,6 +6,7 @@ import { RpcProvider } from 'worker-rpc';
 import { NormalizedMessage } from './NormalizedMessage';
 import { Message } from './Message';
 import { RunPayload, RunResult, RUN } from './RpcTypes';
+import { prepareErrorForSerialization } from './util';
 
 // fork workers...
 const division = parseInt(process.env.WORK_DIVISION || '', 10);
@@ -51,7 +52,9 @@ parentRpc.registerRpcHandler<RunPayload, RunResult>(RUN, async message => {
     workerRpcs.map(workerRpc =>
       workerRpc.rpc<RunPayload, RunResult>(RUN, message)
     )
-  );
+  ).catch(e => {
+    throw prepareErrorForSerialization(e);
+  });
 
   function workerFinished(
     workerResult: (Message | undefined)[]
