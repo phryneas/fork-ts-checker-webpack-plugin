@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var describe = require('mocha').describe;
 var webpack = require('webpack');
 var ForkTsCheckerWebpackPlugin = require('../../lib/index');
 var RpcProvider = require('worker-rpc').RpcProvider;
@@ -198,4 +199,12 @@ exports.getRpcProvider = () => {
     process.on('message', message => rpc.dispatch(message));
   }
   return rpc;
+};
+
+exports.describeIncrementalApiTests = (description, tests) => {
+  if (Number.parseFloat(require('typescript').versionMajorMinor) >= 2.7) {
+    describe(description, tests);
+  } else {
+    describe.skip(description, tests);
+  }
 };

@@ -7,11 +7,11 @@
  * */
 
 var fs = require('fs');
-var describe = require('mocha').describe;
 var it = require('mocha').it;
 var chai = require('chai');
 var path = require('path');
 var helpers = require('./helpers');
+var describe = helpers.describeIncrementalApiTests;
 
 chai.config.truncateThreshold = 0;
 var expect = chai.expect;

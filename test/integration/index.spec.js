@@ -9,7 +9,7 @@ var helpers = require('./helpers');
 chai.config.truncateThreshold = 0;
 var expect = chai.expect;
 
-describe(
+helpers.describeIncrementalApiTests(
   '[INTEGRATION] common tests - useTypescriptIncrementalApi: true',
   makeCommonTests(true)
 );

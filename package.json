@@ -36,17 +36,15 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "rimraf lib && tsc --version && tsc --project \"./src\"",
+    "build": "tsc --version && tsc --project \"./src\"",
+    "test:unit": "mocha -R spec ./test/unit --exit",
+    "test:integration": "mocha -R spec ./test/integration --exit && rimraf tmp",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:watch": "mocha -R spec --watch ./test/unit",
+    "test:coverage": "rimraf coverage && istanbul cover -root lib --include-all-sources mocha -- -R spec ./test/unit ./test/integration",
     "lint": "tslint --project src/tsconfig.json && eslint ./test",
     "lint:fix": "tslint --project src/tsconfig.json --fix && eslint ./test --fix",
-    "test": "yarn build && yarn test:unit && yarn test:integration",
-    "test:coverage": "rimraf coverage && istanbul cover -root lib --include-all-sources mocha -- -R spec ./test/unit ./test/integration",
-    "test:integration": "mocha -R spec ./test/integration --exit && rimraf tmp",
-    "test:unit": "mocha -R spec ./test/unit --exit",
-    "test:watch": "mocha -R spec --watch ./test/unit",
-    "watch": "tsc --version && tsc --project \"./src\" --watch",
-    "precommit": "lint-staged && yarn build",
-    "commit": "./node_modules/.bin/git-cz"
+    "watch": "tsc --version && tsc --project \"./src\" --watch"
   },
   "husky": {
     "hooks": {
