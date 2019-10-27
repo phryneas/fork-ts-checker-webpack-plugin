@@ -11,6 +11,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
+    "declarationMap": true,
     "outDir": "../lib",
     "sourceMap": true
   }

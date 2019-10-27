@@ -25,19 +25,20 @@ import {
 import { RunPayload, RunResult, RUN } from './RpcTypes';
 
 const checkerPluginName = 'fork-ts-checker-webpack-plugin';
-
+/** @public */
 namespace ForkTsCheckerWebpackPlugin {
+  /** @public */
   export type Formatter = (
     message: NormalizedMessage,
     useColors: boolean
   ) => string;
-
+  /** @public */
   export interface Logger {
     error(message?: any): void;
     warn(message?: any): void;
     info(message?: any): void;
   }
-
+  /** @public */
   export interface Options {
     typescript: string;
     tsconfig: string;
@@ -75,6 +76,8 @@ namespace ForkTsCheckerWebpackPlugin {
  * This speed-ups build a lot.
  *
  * Options description in README.md
+ *
+ * @public
  */
 class ForkTsCheckerWebpackPlugin {
   public static readonly DEFAULT_MEMORY_LIMIT = 2048;
@@ -1003,4 +1006,5 @@ class ForkTsCheckerWebpackPlugin {
   }
 }
 
+/** @public */
 export = ForkTsCheckerWebpackPlugin;
