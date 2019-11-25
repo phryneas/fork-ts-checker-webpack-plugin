@@ -1,4 +1,50 @@
 import * as process from 'process';
+import * as mockRequire from 'mock-require';
+
+import { getWrapperUtils, WrapperUtils } from './wrapperUtils';
+import { handleVueContentBuilder } from './handleVueContents';
+
+let patchConfig: TypeScriptPatchConfig = {
+  skipGetSyntacticDiagnostics:
+    process.env.USE_INCREMENTAL_API === 'true' &&
+    process.env.CHECK_SYNTACTIC_ERRORS !== 'true',
+
+  extensionHandlers: {},
+  wrapExtensions: [],
+  resolveModuleName: process.env.RESOLVE_MODULE_NAME,
+  resolveTypeReferenceDirective: process.env.RESOLVE_TYPE_REFERENCE_DIRECTIVE
+};
+
+const vueOptions: VueOptions = JSON.parse(process.env.VUE!);
+
+let wrapperUtils: WrapperUtils | null = null;
+
+if (vueOptions.enabled) {
+  const handleVueContents = handleVueContentBuilder(vueOptions);
+  patchConfig = {
+    ...patchConfig,
+    extensionHandlers: {
+      '.vue': handleVueContents,
+      '.vuex': handleVueContents
+    },
+    wrapExtensions: ['.vue', '.vuex']
+  };
+
+  wrapperUtils = getWrapperUtils(patchConfig);
+
+  // mock the "fs" module
+  mockRequire(
+    'fs',
+    require('./fakeExtensionFs').build(
+      require('fs'),
+      wrapperUtils.unwrapFileName,
+      wrapperUtils.wrapFileName
+    )
+  );
+  mockRequire.reRequire('fs');
+}
+
+// now continue with everything as normal
 // tslint:disable-next-line:no-implicit-dependencies
 import * as ts from 'typescript'; // import for types alone
 
@@ -16,10 +62,12 @@ import {
   makeCreateNormalizedMessageFromRuleFailure,
   makeCreateNormalizedMessageFromInternalError
 } from './NormalizedMessageFactories';
+
 import { RpcProvider } from 'worker-rpc';
 import { RunPayload, RunResult, RUN } from './RpcTypes';
 import { TypeScriptPatchConfig, patchTypescript } from './patchTypescript';
 import { createEslinter } from './createEslinter';
+import { VueOptions } from './types/vue-options';
 
 const rpc = new RpcProvider(message => {
   try {
@@ -36,11 +84,6 @@ const rpc = new RpcProvider(message => {
 process.on('message', message => rpc.dispatch(message));
 
 const typescript: typeof ts = require(process.env.TYPESCRIPT_PATH!);
-const patchConfig: TypeScriptPatchConfig = {
-  skipGetSyntacticDiagnostics:
-    process.env.USE_INCREMENTAL_API === 'true' &&
-    process.env.CHECK_SYNTACTIC_ERRORS !== 'true'
-};
 
 patchTypescript(typescript, patchConfig);
 
@@ -50,15 +93,6 @@ export const createNormalizedMessageFromDiagnostic = makeCreateNormalizedMessage
 );
 export const createNormalizedMessageFromRuleFailure = makeCreateNormalizedMessageFromRuleFailure();
 export const createNormalizedMessageFromInternalError = makeCreateNormalizedMessageFromInternalError();
-
-const resolveModuleName = process.env.RESOLVE_MODULE_NAME
-  ? require(process.env.RESOLVE_MODULE_NAME!).resolveModuleName
-  : undefined;
-const resolveTypeReferenceDirective = process.env
-  .RESOLVE_TYPE_REFERENCE_DIRECTIVE
-  ? require(process.env.RESOLVE_TYPE_REFERENCE_DIRECTIVE!)
-      .resolveTypeReferenceDirective
-  : undefined;
 
 const eslinter =
   process.env.ESLINT === 'true'
@@ -79,10 +113,7 @@ function createChecker(
     linterAutoFix: process.env.TSLINTAUTOFIX === 'true',
     createNormalizedMessageFromRuleFailure,
     eslinter,
-    checkSyntacticErrors: process.env.CHECK_SYNTACTIC_ERRORS === 'true',
-    resolveModuleName,
-    resolveTypeReferenceDirective,
-    vue: JSON.parse(process.env.VUE!)
+    checkSyntacticErrors: process.env.CHECK_SYNTACTIC_ERRORS === 'true'
   };
 
   if (useIncrementalApi) {
@@ -116,6 +147,37 @@ async function run(cancellationToken: CancellationToken) {
       lints = checker.getEsLints(cancellationToken);
     } else if (checker.hasLinter()) {
       lints = checker.getLints(cancellationToken);
+    }
+
+    if (wrapperUtils !== null) {
+      const wrapUtils = wrapperUtils;
+      lints = lints.map(lint => {
+        if (lint.file) {
+          const unwrappedFileName = wrapUtils.unwrapFileName(lint.file);
+
+          if (unwrappedFileName !== lint.file) {
+            return new NormalizedMessage({
+              ...lint.toJSON(),
+              file: unwrappedFileName
+            });
+          }
+        }
+        return lint;
+      });
+
+      diagnostics = diagnostics.map(diagnostic => {
+        if (diagnostic.file) {
+          const unwrappedFileName = wrapUtils.unwrapFileName(diagnostic.file);
+
+          if (unwrappedFileName !== diagnostic.file) {
+            return new NormalizedMessage({
+              ...diagnostic.toJSON(),
+              file: unwrappedFileName
+            });
+          }
+        }
+        return diagnostic;
+      });
     }
   } catch (error) {
     if (error instanceof typescript.OperationCanceledException) {

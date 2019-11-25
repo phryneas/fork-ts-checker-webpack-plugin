@@ -24,11 +24,9 @@ export function makeResolutionFunctions(
   resolveModuleName =
     resolveModuleName ||
     ((
-      // tslint:disable-next-line:no-shadowed-variable
       typescript,
       moduleName,
       containingFile,
-      // tslint:disable-next-line:no-shadowed-variable
       compilerOptions,
       moduleResolutionHost
     ) => {

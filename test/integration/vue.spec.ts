@@ -17,21 +17,22 @@ const vueTplCompilers = [
   'nativescript-vue-template-compiler'
 ] as const;
 
-const useTypescriptIncrementalApiOptions = [
-  /* true, */
-  false
-] as const;
+const useTypescriptIncrementalApiOptions = [true, false] as const;
 
 // eslint-disable-next-line @typescript-eslint/array-type
 function mixLists<T1, T2>(list1: ReadonlyArray<T1>, list2: ReadonlyArray<T2>) {
-  return list1.reduce((acc, item1) => acc.concat(list2.map(item2 => [item1, item2])), [] as [T1, T2][]);
+  return list1.reduce(
+    (acc, item1) => acc.concat(list2.map(item2 => [item1, item2])),
+    [] as [T1, T2][]
+  );
 }
 
 describe.each(mixLists(useTypescriptIncrementalApiOptions, vueTplCompilers))(
   '[INTEGRATION] vue tests - useTypescriptIncrementalApi: %s, vue tpl compiler: %s',
   (useTypescriptIncrementalApi, vueTplCompiler) => {
     const vueEnabledOption = { enabled: true, compiler: vueTplCompiler };
-    const testOnlyFirstVueTplCompiler = vueEnabledOption.compiler !== vueTplCompilers[0] ? it.skip : it;
+    const testOnlyFirstVueTplCompiler =
+      vueEnabledOption.compiler !== vueTplCompilers[0] ? it.skip : it;
 
     const createCompiler = (options: Partial<CreateCompilerOptions> = {}) =>
       createVueCompiler({
@@ -80,21 +81,28 @@ describe.each(mixLists(useTypescriptIncrementalApiOptions, vueTplCompilers))(
       expect(fileFound).toBe(true);
     });
 
-    testOnlyFirstVueTplCompiler('should not create a Vue program config if vue is disabled', async () => {
-      const { getKnownFileNames, files } = await createCompiler();
+    testOnlyFirstVueTplCompiler(
+      'should not create a Vue program config if vue is disabled',
+      async () => {
+        const { getKnownFileNames, files } = await createCompiler();
 
-      const fileNames = await getKnownFileNames();
+        const fileNames = await getKnownFileNames();
 
-      let fileFound;
-      let fileWeWant = unixify(files['example.vue']);
+        let fileFound;
+        let fileWeWant = unixify(files['example.vue']);
 
-      fileFound = fileNames.some(filename => unixify(filename) === fileWeWant);
-      expect(fileFound).toBe(false);
+        fileFound = fileNames.some(
+          filename => unixify(filename) === fileWeWant
+        );
+        expect(fileFound).toBe(false);
 
-      fileWeWant = unixify(files['syntacticError.ts']);
-      fileFound = fileNames.some(filename => unixify(filename) === fileWeWant);
-      expect(fileFound).toBe(true);
-    });
+        fileWeWant = unixify(files['syntacticError.ts']);
+        fileFound = fileNames.some(
+          filename => unixify(filename) === fileWeWant
+        );
+        expect(fileFound).toBe(true);
+      }
+    );
 
     it('should create a Vue program if vue is enabled', async () => {
       const { getSourceFile, files } = await createCompiler({
@@ -110,17 +118,20 @@ describe.each(mixLists(useTypescriptIncrementalApiOptions, vueTplCompilers))(
       expect(source).toBeDefined();
     });
 
-    testOnlyFirstVueTplCompiler('should not create a Vue program if vue is disabled', async () => {
-      const { getSourceFile, files } = await createCompiler();
+    testOnlyFirstVueTplCompiler(
+      'should not create a Vue program if vue is disabled',
+      async () => {
+        const { getSourceFile, files } = await createCompiler();
 
-      let source;
+        let source;
 
-      source = await getSourceFile(files['example.vue']);
-      expect(source).toBeUndefined();
+        source = await getSourceFile(files['example.vue']);
+        expect(source).toBeUndefined();
 
-      source = await getSourceFile(files['syntacticError.ts']);
-      expect(source).toBeDefined();
-    });
+        source = await getSourceFile(files['syntacticError.ts']);
+        expect(source).toBeDefined();
+      }
+    );
 
     it('should get syntactic diagnostics from Vue program', async () => {
       const { getSyntacticDiagnostics } = await createCompiler({
@@ -170,22 +181,26 @@ describe.each(mixLists(useTypescriptIncrementalApiOptions, vueTplCompilers))(
     });
 
     it('should not report no-consecutive-blank-lines tslint rule', callback => {
-      createCompiler({ pluginOptions: { tslint: true, vue: vueEnabledOption } }).then(
-        ({ compiler }) =>
-          compiler.run((error, stats) => {
-            stats.compilation.warnings.forEach(warning => {
-              expect(warning.rawMessage).not.toMatch(
-                /no-consecutive-blank-lines/
-              );
-            });
-            callback();
-          })
+      createCompiler({
+        pluginOptions: { tslint: true, vue: vueEnabledOption }
+      }).then(({ compiler }) =>
+        compiler.run((error, stats) => {
+          stats.compilation.warnings.forEach(warning => {
+            expect(warning.rawMessage).not.toMatch(
+              /no-consecutive-blank-lines/
+            );
+          });
+          callback();
+        })
       );
     });
 
     it('should resolve src attribute but not report not found error', callback => {
       createCompiler({
-        pluginOptions: { vue: vueEnabledOption, tsconfig: 'tsconfig-attrs.json' }
+        pluginOptions: {
+          vue: vueEnabledOption,
+          tsconfig: 'tsconfig-attrs.json'
+        }
       }).then(({ compiler }) =>
         compiler.run((error, stats) => {
           const errors = stats.compilation.errors;
@@ -202,20 +217,19 @@ describe.each(mixLists(useTypescriptIncrementalApiOptions, vueTplCompilers))(
       'example-js.vue',
       'example-jsx.vue',
       'example-nolang.vue'
-    ])('should be able to extract script from %s',
-      async fileName => {
-        const { getSourceFile, contextDir } = await createCompiler({
-          pluginOptions: { vue: vueEnabledOption, tsconfig: 'tsconfig-langs.json' }
-        });
-        const sourceFilePath = path.resolve(
-          contextDir,
-          'src/langs/' + fileName
-        );
-        const source = await getSourceFile(sourceFilePath);
-        expect(source).toBeDefined();
-        // remove padding lines
-        const text = source!.text.replace(/^\s*\/\/.*$\r*\n/gm, '').trim();
-        expect(text.startsWith('/* OK */')).toBe(true);
+    ])('should be able to extract script from %s', async fileName => {
+      const { getSourceFile, contextDir } = await createCompiler({
+        pluginOptions: {
+          vue: vueEnabledOption,
+          tsconfig: 'tsconfig-langs.json'
+        }
+      });
+      const sourceFilePath = path.resolve(contextDir, 'src/langs/' + fileName);
+      const source = await getSourceFile(sourceFilePath);
+      expect(source).toBeDefined();
+      // remove padding lines
+      const text = source!.text.replace(/^\s*\/\/.*$\r*\n/gm, '').trim();
+      expect(text.startsWith('/* OK */')).toBe(true);
     });
 
     function groupByFileName(errors: Error[]) {

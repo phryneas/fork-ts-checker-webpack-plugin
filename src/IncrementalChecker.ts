@@ -16,20 +16,13 @@ import {
 import { WorkSet } from './WorkSet';
 import { NormalizedMessage } from './NormalizedMessage';
 import { CancellationToken } from './CancellationToken';
-import {
-  ResolveModuleName,
-  ResolveTypeReferenceDirective,
-  makeResolutionFunctions
-} from './resolution';
 import * as minimatch from 'minimatch';
-import { VueProgram } from './VueProgram';
 import { throwIfIsInvalidSourceFileError } from './FsHelper';
 import {
   IncrementalCheckerInterface,
   IncrementalCheckerParams
 } from './IncrementalCheckerInterface';
 import { createEslinter } from './createEslinter';
-import { VueOptions } from './types/vue-options';
 
 export class IncrementalChecker implements IncrementalCheckerInterface {
   // it's shared between compilations
@@ -71,12 +64,7 @@ export class IncrementalChecker implements IncrementalCheckerInterface {
   private readonly watchPaths: string[];
   private readonly workNumber: number;
   private readonly workDivision: number;
-  private readonly vue: VueOptions;
   private readonly checkSyntacticErrors: boolean;
-  private readonly resolveModuleName: ResolveModuleName | undefined;
-  private readonly resolveTypeReferenceDirective:
-    | ResolveTypeReferenceDirective
-    | undefined;
 
   constructor({
     typescript,
@@ -91,10 +79,7 @@ export class IncrementalChecker implements IncrementalCheckerInterface {
     watchPaths,
     workNumber = 0,
     workDivision = 1,
-    vue,
-    checkSyntacticErrors = false,
-    resolveModuleName,
-    resolveTypeReferenceDirective
+    checkSyntacticErrors = false
   }: IncrementalCheckerParams) {
     this.typescript = typescript;
     this.context = context;
@@ -108,11 +93,7 @@ export class IncrementalChecker implements IncrementalCheckerInterface {
     this.watchPaths = watchPaths;
     this.workNumber = workNumber;
     this.workDivision = workDivision;
-    this.vue = vue;
     this.checkSyntacticErrors = checkSyntacticErrors;
-    this.resolveModuleName = resolveModuleName;
-    this.resolveTypeReferenceDirective = resolveTypeReferenceDirective;
-
     this.hasFixedConfig = typeof this.linterConfigFile === 'string';
   }
 
@@ -154,47 +135,10 @@ export class IncrementalChecker implements IncrementalCheckerInterface {
     programConfig: ts.ParsedCommandLine,
     files: FilesRegister,
     watcher: FilesWatcher,
-    oldProgram: ts.Program,
-    userResolveModuleName: ResolveModuleName | undefined,
-    userResolveTypeReferenceDirective: ResolveTypeReferenceDirective | undefined
+    oldProgram: ts.Program
   ) {
     const host = typescript.createCompilerHost(programConfig.options);
     const realGetSourceFile = host.getSourceFile;
-
-    const {
-      resolveModuleName,
-      resolveTypeReferenceDirective
-    } = makeResolutionFunctions(
-      userResolveModuleName,
-      userResolveTypeReferenceDirective
-    );
-
-    host.resolveModuleNames = (moduleNames, containingFile) => {
-      return moduleNames.map(moduleName => {
-        return resolveModuleName(
-          typescript,
-          moduleName,
-          containingFile,
-          programConfig.options,
-          host
-        ).resolvedModule;
-      });
-    };
-
-    host.resolveTypeReferenceDirectives = (
-      typeDirectiveNames,
-      containingFile
-    ) => {
-      return typeDirectiveNames.map(typeDirectiveName => {
-        return resolveTypeReferenceDirective(
-          typescript,
-          typeDirectiveName,
-          containingFile,
-          programConfig.options,
-          host
-        ).resolvedTypeReferenceDirective;
-      });
-    };
 
     host.getSourceFile = (filePath, languageVersion, onError) => {
       // first check if watcher is watching file - if not - check it's mtime
@@ -254,9 +198,7 @@ export class IncrementalChecker implements IncrementalCheckerInterface {
 
   public nextIteration() {
     if (!this.watcher) {
-      const watchExtensions = this.vue.enabled
-        ? ['.ts', '.tsx', '.vue']
-        : ['.ts', '.tsx'];
+      const watchExtensions = ['.ts', '.tsx'];
       this.watcher = new FilesWatcher(this.watchPaths, watchExtensions);
 
       // connect watcher with register
@@ -286,35 +228,11 @@ export class IncrementalChecker implements IncrementalCheckerInterface {
       }
     }
 
-    this.program = this.vue.enabled
-      ? this.loadVueProgram(this.vue)
-      : this.loadDefaultProgram();
+    this.program = this.loadDefaultProgram();
 
     if (this.linterConfigFile) {
       this.linter = this.createLinter(this.program!);
     }
-  }
-
-  private loadVueProgram(vueOptions: VueOptions) {
-    this.programConfig =
-      this.programConfig ||
-      VueProgram.loadProgramConfig(
-        this.typescript,
-        this.programConfigFile,
-        this.compilerOptions
-      );
-
-    return VueProgram.createProgram(
-      this.typescript,
-      this.programConfig,
-      path.dirname(this.programConfigFile),
-      this.files,
-      this.watcher!,
-      this.program!,
-      this.resolveModuleName,
-      this.resolveTypeReferenceDirective,
-      vueOptions
-    );
   }
 
   private loadDefaultProgram() {
@@ -331,9 +249,7 @@ export class IncrementalChecker implements IncrementalCheckerInterface {
       this.programConfig,
       this.files,
       this.watcher!,
-      this.program!,
-      this.resolveModuleName,
-      this.resolveTypeReferenceDirective
+      this.program!
     );
   }
 

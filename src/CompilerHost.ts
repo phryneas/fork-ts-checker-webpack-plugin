@@ -1,9 +1,6 @@
 // tslint:disable-next-line:no-implicit-dependencies
 import * as ts from 'typescript'; // Imported for types alone
 import { LinkedList } from './LinkedList';
-import { VueProgram } from './VueProgram';
-import { ResolveModuleName, ResolveTypeReferenceDirective } from './resolution';
-import { VueOptions } from './types/vue-options';
 
 interface DirectoryWatchDelaySlot {
   events: { fileName: string }[];
@@ -53,30 +50,11 @@ export class CompilerHost
 
   private compilationStarted = false;
 
-  public resolveModuleNames:
-    | ((
-        moduleNames: string[],
-        containingFile: string,
-        reusedNames?: string[] | undefined,
-        redirectedReference?: ts.ResolvedProjectReference | undefined
-      ) => (ts.ResolvedModule | undefined)[])
-    | undefined;
-  public resolveTypeReferenceDirectives:
-    | ((
-        typeReferenceDirectiveNames: string[],
-        containingFile: string,
-        redirectedReference?: ts.ResolvedProjectReference | undefined
-      ) => (ts.ResolvedTypeReferenceDirective | undefined)[])
-    | undefined;
-
   constructor(
     private typescript: typeof ts,
-    private vueOptions: VueOptions,
     programConfigFile: string,
     compilerOptions: ts.CompilerOptions,
-    checkSyntacticErrors: boolean,
-    userResolveModuleName?: ResolveModuleName,
-    userResolveTypeReferenceDirective?: ResolveTypeReferenceDirective
+    checkSyntacticErrors: boolean
   ) {
     this.tsHost = typescript.createWatchCompilerHost(
       programConfigFile,
@@ -101,40 +79,6 @@ export class CompilerHost
 
     this.configFileName = this.tsHost.configFileName;
     this.optionsToExtend = this.tsHost.optionsToExtend || {};
-
-    if (userResolveModuleName) {
-      this.resolveModuleNames = (
-        moduleNames: string[],
-        containingFile: string
-      ) => {
-        return moduleNames.map(moduleName => {
-          return userResolveModuleName(
-            this.typescript,
-            moduleName,
-            containingFile,
-            this.optionsToExtend,
-            this
-          ).resolvedModule;
-        });
-      };
-    }
-
-    if (userResolveTypeReferenceDirective) {
-      this.resolveTypeReferenceDirectives = (
-        typeDirectiveNames: string[],
-        containingFile: string
-      ) => {
-        return typeDirectiveNames.map(typeDirectiveName => {
-          return userResolveTypeReferenceDirective(
-            this.typescript,
-            typeDirectiveName,
-            containingFile,
-            this.optionsToExtend,
-            this
-          ).resolvedTypeReferenceDirective;
-        });
-      };
-    }
   }
 
   public async processChanges(): Promise<{
@@ -318,19 +262,7 @@ export class CompilerHost
   }
 
   public readFile(path: string, encoding?: string) {
-    const content = this.tsHost.readFile(path, encoding);
-
-    // get typescript contents from Vue file
-    if (content && VueProgram.isVue(path)) {
-      const resolved = VueProgram.resolveScriptBlock(
-        this.typescript,
-        content,
-        this.vueOptions.compiler
-      );
-      return resolved.content;
-    }
-
-    return content;
+    return this.tsHost.readFile(path, encoding);
   }
 
   public directoryExists(path: string): boolean {

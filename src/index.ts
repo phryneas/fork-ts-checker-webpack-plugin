@@ -221,7 +221,7 @@ class ForkTsCheckerWebpackPlugin {
 
     this.useTypescriptIncrementalApi =
       options.useTypescriptIncrementalApi === undefined
-        ? semver.gte(this.typescriptVersion, '3.0.0') && !this.vue.enabled
+        ? semver.gte(this.typescriptVersion, '3.0.0')
         : options.useTypescriptIncrementalApi;
 
     this.measureTime = options.measureCompilationTime === true;

@@ -132,7 +132,7 @@
     "lint-staged": "^8.0.5",
     "lodash": "^4.17.11",
     "mock-fs": "^4.3.0",
-    "mock-require": "^3.0.2",
+    "mock-require": "^3.0.3",
     "nativescript-vue-template-compiler": "^2.4.0",
     "prettier": "^1.14.3",
     "rimraf": "^2.5.4",

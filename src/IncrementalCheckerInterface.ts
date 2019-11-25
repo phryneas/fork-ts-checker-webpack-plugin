@@ -4,9 +4,7 @@ import * as ts from 'typescript'; // import for types alone
 import { RuleFailure } from 'tslint'; // import for types alone
 import { CancellationToken } from './CancellationToken';
 import { NormalizedMessage } from './NormalizedMessage';
-import { ResolveTypeReferenceDirective, ResolveModuleName } from './resolution';
 import { createEslinter } from './createEslinter';
-import { VueOptions } from './types/vue-options';
 
 export interface IncrementalCheckerInterface {
   nextIteration(): void;
@@ -39,9 +37,6 @@ export interface ApiIncrementalCheckerParams {
   ) => NormalizedMessage;
   eslinter: ReturnType<typeof createEslinter> | undefined;
   checkSyntacticErrors: boolean;
-  resolveModuleName: ResolveModuleName | undefined;
-  resolveTypeReferenceDirective: ResolveTypeReferenceDirective | undefined;
-  vue: VueOptions;
 }
 
 export interface IncrementalCheckerParams extends ApiIncrementalCheckerParams {

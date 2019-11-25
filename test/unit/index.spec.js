@@ -125,25 +125,5 @@ describe('[UNIT] ForkTsCheckerWebpackPlugin', () => {
         true
       );
     });
-
-    it('should be false if useTypescriptIncrementalApi not supplied and typescript version < 3.0.0 and vue is true', () => {
-      jest.setMock('typescript', { version: '2.1.0' });
-      var ForkTsCheckerWebpackPlugin = require('../../lib/index');
-
-      expect(
-        new ForkTsCheckerWebpackPlugin({ vue: true })
-          .useTypescriptIncrementalApi
-      ).toBe(false);
-    });
-
-    it('should be false if useTypescriptIncrementalApi not supplied and typescript version >= 3.0.0 and vue is true', () => {
-      jest.setMock('typescript', { version: '3.0.0' });
-      var ForkTsCheckerWebpackPlugin = require('../../lib/index');
-
-      expect(
-        new ForkTsCheckerWebpackPlugin({ vue: true })
-          .useTypescriptIncrementalApi
-      ).toBe(false);
-    });
   });
 });
